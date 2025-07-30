@@ -75,6 +75,7 @@ def main():
     water_temperature = []
     swell_height = []
     swell_direction = []
+    drift_speed_std = []
 
     swift_fnames = ['./data/swift-data/SASSIE_Fall_2022_SWIFT12_play1.nc', './data/swift-data/SASSIE_Fall_2022_SWIFT13_play1.nc', 
                     './data/swift-data/SASSIE_Fall_2022_SWIFT15_play1.nc', './data/swift-data/SASSIE_Fall_2022_SWIFT16_play1.nc', 
@@ -91,6 +92,7 @@ def main():
         wave_direction.append(swift_data['surface_wave_direction'][:])
         wave_period.append(swift_data['surface_wave_period'][:])
         drift_speed.append(swift_data['drift_speed'][:])
+        drift_speed_std.append(swift_data['drift_speed_stdev'][:])
         drift_direction.append(swift_data['drift_direction'][:])
         instrument_type.append(['SWIFT' for n in range(swift_data['drift_direction'][:].size)])
         windspd.append(swift_data['wind_speed'][:])
@@ -98,6 +100,7 @@ def main():
         swiftnum.append(int(fname[-11:-9])*np.ones(swift_data['wind_direction'][:].size))
         salinity.append(swift_data['salinity'][:])
         water_temperature.append(swift_data['water_temperature'][:])
+
 
         # Compute Swell Height Based on obeserved frequency limits from plotted spectra (0.08 - 0.2 Hz)
         f_low = 0.08
@@ -127,6 +130,7 @@ def main():
         hs_wave.append(get_wg_data(wg_data, 'sigwaveheight'))
         wave_direction.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))
         drift_speed.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))
+        drift_speed_std.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))
         drift_direction.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))
         instrument_type.append(['WG' for n in range(get_wg_data(wg_data, 'lat').size)])
         windspd.append(get_wg_data(wg_data, 'windspd'))
@@ -146,6 +150,7 @@ def main():
     wave_direction = np.concatenate(wave_direction).flatten()
     wave_period = np.concatenate(wave_period).flatten()
     drift_speed = np.concatenate(drift_speed).flatten()
+    drift_speed_std = np.concatenate(drift_speed_std).flatten()
     drift_direction = np.concatenate(drift_direction).flatten()
     instrument_type = np.concatenate(instrument_type).flatten()
     windspd = np.concatenate(windspd).flatten()
@@ -169,6 +174,7 @@ def main():
     df['wave_direction'] = wave_direction
     df['wave_direction_mathconv'] = 270 - wave_direction
     df['drift_speed'] = drift_speed
+    df['drift_speed_std'] = drift_speed_std
     df['drift_direction'] = drift_direction
     df['instrument_type'] = instrument_type
     df['windspd'] = windspd
