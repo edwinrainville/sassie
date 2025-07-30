@@ -125,18 +125,18 @@ def main():
         latitude.append(get_wg_data(wg_data, 'lat'))
         longitude.append(get_wg_data(wg_data, 'lon'))
         hs_wave.append(get_wg_data(wg_data, 'sigwaveheight'))
-        wave_direction.append(np.NaN*np.ones(get_wg_data(wg_data, 'lat').size))
-        drift_speed.append(np.NaN*np.ones(get_wg_data(wg_data, 'lat').size))
-        drift_direction.append(np.NaN*np.ones(get_wg_data(wg_data, 'lat').size))
+        wave_direction.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))
+        drift_speed.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))
+        drift_direction.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))
         instrument_type.append(['WG' for n in range(get_wg_data(wg_data, 'lat').size)])
         windspd.append(get_wg_data(wg_data, 'windspd'))
         winddir.append(get_wg_data(wg_data, 'winddirT'))
-        swiftnum.append(np.NaN*np.ones(get_wg_data(wg_data, 'lat').size))
+        swiftnum.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))
         wave_period.append(get_wg_data(wg_data, 'peakwaveperiod'))
-        water_temperature.append(np.NaN*np.ones(get_wg_data(wg_data, 'lat').size))
-        salinity.append(np.NaN*np.ones(get_wg_data(wg_data, 'lat').size))
-        swell_height.append(np.NaN*np.ones(get_wg_data(wg_data, 'lat').size))    
-        swell_direction.append(np.NaN*np.ones(get_wg_data(wg_data, 'lat').size))    
+        water_temperature.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))
+        salinity.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))
+        swell_height.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))    
+        swell_direction.append(np.nan*np.ones(get_wg_data(wg_data, 'lat').size))    
     
     # Concatenate and flatten the aggregate data
     time = np.concatenate(time).flatten()
@@ -184,7 +184,7 @@ def main():
     df['y cartesian'] = y
 
     # Fill all -999 with NaN values
-    df.replace(to_replace=-999, value=np.NaN, inplace=True)
+    df.replace(to_replace=-999, value=np.nan, inplace=True)
 
     # Compute the x and y direction drift and wind speeds
     drift_direction_math_conv = navigation_angle2math_angle(df['drift_direction'], convention='toward')
@@ -202,10 +202,9 @@ def main():
     mask = (df['time'] > '2022-09-09 19:30:00') & (df['time'] <= '2022-09-12 12:10:00')
     df = df.loc[mask]
 
-    # Interpolate the ice concentration to each point
-
-    # Transform the lat lon to cross and along ice coordinate system
-    
+    # Add seconds since start of the experiment
+    start_time = pd.to_datetime('2022-09-09 19:30:00')
+    df['seconds_since_start'] = (pd.to_datetime(df['time']) - start_time).dt.total_seconds()    
 
     # Save the dataframe
     df.to_csv('./data/play1_df.csv')
